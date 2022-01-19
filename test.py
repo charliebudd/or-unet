@@ -56,11 +56,12 @@ def test(model_directory, data_glob, dataset_name):
     with open(f"{model_directory}/{dataset_name}_scores.txt", "w") as file:
 
         def log(output):
-            file.write(output)
+            file.write(output + "\n")
             print(output)
 
         for index, score in enumerate(model_scores):
             log(f"Cross Validation {index}: {score:.4f}")
+        log("")
         log(f"Ensemble: {ensemble_score:.4f}")
 
 
