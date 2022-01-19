@@ -7,8 +7,6 @@ import argparse
 
 from data import RobustDataset, AdaptiveResize, StatefulRandomCrop
 
-import matplotlib.pyplot as plt
-
 def test(model_directory, data_glob, dataset_name):
 
     device = 'cuda'
@@ -69,7 +67,7 @@ def test(model_directory, data_glob, dataset_name):
 def dice_score(input, target):
     SMOOTH = 1
     intersection = (input * target).sum(dim=(1, 2))
-    return 1 - (2 * intersection + SMOOTH) / (input.sum(dim=(1, 2)) + target.sum(dim=(1, 2)) + SMOOTH)  
+    return (2 * intersection + SMOOTH) / (input.sum(dim=(1, 2)) + target.sum(dim=(1, 2)) + SMOOTH)  
 
 
 if __name__ == "__main__":
