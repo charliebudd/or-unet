@@ -2,7 +2,6 @@
 # tool segmentation for the robustmis dataset
 # Paper: https://arxiv.org/pdf/2004.12668.pdf
 
-from ast import arg
 import torch
 from torch.optim.lr_scheduler import ExponentialLR
 from torch.optim import SGD
