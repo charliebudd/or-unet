@@ -8,12 +8,14 @@ class OrUnetLoss(Module):
         self.primary_loss = PrimaryLoss()
         self.secondary_loss = SecondaryLoss()
     
-    def forward(self, outputs, target):
+    def forward(self, outputs, target, loss_coefficients=None, debug=False):
 
         output_count = len(outputs)
 
         loss_functions = [self.primary_loss] + (output_count - 1) * [self.secondary_loss]
-        loss_coefficients = [1.0/2**i for i in range(output_count)]
+
+        if loss_coefficients is None:
+            loss_coefficients = [1.0/2**i for i in range(output_count)]
 
         targets = [target]
         for _ in range(output_count - 1):
@@ -22,8 +24,11 @@ class OrUnetLoss(Module):
 
         losses = [coef * func(out, targ) for coef, func, out, targ in zip (loss_coefficients, loss_functions, outputs, targets)]
         loss = sum(losses) / sum(loss_coefficients)
-        
-        return loss
+
+        if debug:
+            return loss, losses, targets
+        else:
+            return loss
 
 
 class PrimaryLoss(Module):
