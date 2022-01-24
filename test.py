@@ -6,6 +6,7 @@ from glob import glob
 import argparse
 
 from data import RobustDataset, AdaptiveResize, StatefulRandomCrop
+from score import dice_score
 
 def test(model_directory, data_glob, dataset_name):
 
@@ -63,12 +64,6 @@ def test(model_directory, data_glob, dataset_name):
             log(f"Cross Validation {index}: {score:.4f}")
         log("")
         log(f"Ensemble: {ensemble_score:.4f}")
-
-
-def dice_score(input, target):
-    SMOOTH = 1
-    intersection = (input * target).sum(dim=(1, 2))
-    return (2 * intersection + SMOOTH) / (input.sum(dim=(1, 2)) + target.sum(dim=(1, 2)) + SMOOTH)  
 
 
 if __name__ == "__main__":
