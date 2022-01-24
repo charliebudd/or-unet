@@ -1,14 +1,21 @@
 import torch
+import numpy as np
+import random
+import argparse
+
 from torch.utils.data import DataLoader
 from torchvision.transforms import Compose
-
 from glob import glob
-import argparse
 
 from data import RobustDataset, AdaptiveResize, StatefulRandomCrop
 from score import dice_score
 
 def test(model_directory, data_glob, dataset_name):
+
+    SEED = 1
+    torch.manual_seed(SEED)
+    np.random.seed(SEED)
+    random.seed(SEED)
 
     device = 'cuda'
     batch_size = 16

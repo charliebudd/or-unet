@@ -5,6 +5,9 @@
 import torch
 import numpy as np
 import random
+import argparse
+import os
+
 from torch.optim.lr_scheduler import ExponentialLR
 from torch.optim import SGD
 from torch.utils.data import DataLoader
@@ -13,9 +16,6 @@ from torchvision.transforms import Compose
 from data import prepare_cross_validation_datasets, AdaptiveResize, StatefulRandomCrop
 from model import OrUnet
 from loss import OrUnetLoss
-
-import os
-import argparse
 
 def train(out_dir, cross_validation_index):
 
@@ -32,12 +32,12 @@ def train(out_dir, cross_validation_index):
     os.makedirs(out_dir)
 
     device = "cuda"
+    batch_size = 16
 
     # Data Loader:
     transform = Compose([AdaptiveResize((270, 480)), StatefulRandomCrop((256, 448))])
     training_dataset, validation_dataset = prepare_cross_validation_datasets("robustmislite", cross_validation_index, common_transform=transform)
 
-    batch_size = 16
     training_dataloader = DataLoader(training_dataset, batch_size=batch_size, num_workers=batch_size//2, pin_memory=True, shuffle=True)
     validation_dataloader = DataLoader(validation_dataset, batch_size=batch_size, num_workers=batch_size//2, pin_memory=True)
 
