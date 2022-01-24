@@ -43,7 +43,6 @@ def train(out_dir, cross_validation_index):
 
     # Network Architecture:
     model = OrUnet().to(device=device)
-    model_name = f"{out_dir}/model.pt"
 
     # Loss and Optimizer:
     loss_function = OrUnetLoss()
