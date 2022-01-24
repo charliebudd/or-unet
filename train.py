@@ -3,6 +3,8 @@
 # Paper: https://arxiv.org/pdf/2004.12668.pdf
 
 import torch
+import numpy as np
+import random
 from torch.optim.lr_scheduler import ExponentialLR
 from torch.optim import SGD
 from torch.utils.data import DataLoader
@@ -16,6 +18,11 @@ import os
 import argparse
 
 def train(out_dir, cross_validation_index):
+
+    SEED = 1
+    torch.manual_seed(SEED)
+    np.random.seed(SEED)
+    random.seed(SEED)
 
     out_dir = f"{out_dir}/cross_validation_{cross_validation_index}"
 
@@ -56,9 +63,7 @@ def train(out_dir, cross_validation_index):
         print(f"Epoch {epoch} of {max_epochs}")
 
         # Training Loop:
-
         model.train()
-
         loss_sum = 0.0
         norm = 0.0
 
@@ -80,13 +85,11 @@ def train(out_dir, cross_validation_index):
         training_losses.append(training_loss)
 
         # Validation Loop:
+        model.eval()
+        loss_sum = 0.0
+        norm = 0.0
+
         with torch.no_grad():
-
-            model.eval()
-
-            loss_sum = 0.0
-            norm = 0.0
-
             for input, target in validation_dataloader:
 
                 input, target = input.to(device=device), target.to(device=device)
@@ -97,8 +100,8 @@ def train(out_dir, cross_validation_index):
                 loss_sum += loss * input.shape[0]
                 norm += input.shape[0]
 
-            validation_loss = loss_sum / norm
-            validation_losses.append(validation_loss)
+        validation_loss = loss_sum / norm
+        validation_losses.append(validation_loss)
 
         # Early Stopping Update:
         if validation_loss < best_validation_loss:
