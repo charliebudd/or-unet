@@ -37,7 +37,7 @@ class StatefulRandomCrop():
 def none_transform(x):
     return x
 
-def prepare_cross_validation_datasets(root_dir, cross_validation_index=0, common_transform=none_transform, img_transform=none_transform, seg_transform=none_transform):
+def prepare_cross_validation_datasets(root_dir, cross_validation_index=0, training_transform=none_transform, validation_transform=none_transform):
     
     surgery_types = listdir(f"{root_dir}/Training")
     surgery_indices_per_type = [sorted(map(int, listdir(f"{root_dir}/Training/{surgery_type}"))) for surgery_type in surgery_types]
@@ -49,8 +49,8 @@ def prepare_cross_validation_datasets(root_dir, cross_validation_index=0, common
         validation_surgeries += [f"{root_dir}/Training/{surgery_type}/{indicies.pop(cross_validation_index)}"]
         training_surgeries += [f"{root_dir}/Training/{surgery_type}/{index}" for index in indicies]
 
-    training_dataset = ConcatDataset([RobustDataset(f"{surgery_path}/*", common_transform, img_transform, seg_transform) for surgery_path in training_surgeries])
-    validation_dataset = ConcatDataset([RobustDataset(f"{surgery_path}/*", common_transform, img_transform, seg_transform) for surgery_path in validation_surgeries])
+    training_dataset = ConcatDataset([RobustDataset(f"{surgery_path}/*", training_transform) for surgery_path in training_surgeries])
+    validation_dataset = ConcatDataset([RobustDataset(f"{surgery_path}/*", validation_transform) for surgery_path in validation_surgeries])
 
     return training_dataset, validation_dataset
 
