@@ -16,6 +16,7 @@ from torchvision.transforms import Compose, CenterCrop
 from data import prepare_cross_validation_datasets, AdaptiveResize, StatefulRandomCrop
 from model import OrUnet
 from loss import OrUnetLoss
+from poly_lr import PolyLR
 
 def train(out_dir, cross_validation_index):
 
@@ -46,12 +47,12 @@ def train(out_dir, cross_validation_index):
     model = OrUnet().to(device=device)
 
     # Loss and Optimizer:
+    max_epochs = 2000
     loss_function = OrUnetLoss()
     optimizer = SGD(model.parameters(), lr=1.0, momentum=0.9, nesterov=True)
-    scheduler = ExponentialLR(optimizer, 0.9)
+    scheduler = PolyLR(optimizer, max_iter=max_epochs, power=0.9)
 
     # Early Stopping:
-    max_epochs = 2000
     early_stopping_patience = 25
     early_stopping_counter = 0
     best_validation_loss = 1e9
